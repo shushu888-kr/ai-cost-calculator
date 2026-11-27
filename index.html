@@ -6,9 +6,26 @@
 <meta name="google-site-verification" content="uAQrkpGM9eYf3N-1wwRlyMV_qUDk9PWtbKrcUJAexRk" />
 <title>AI API Cost & Token Calculator – Compare GPT-4o, Claude, Gemini, DeepSeek</title>
 <meta name="description" content="Free AI API cost calculator. Estimate and compare monthly costs for GPT-4o, Claude Sonnet, Claude Haiku, Gemini 2.5 and DeepSeek V3 from your tokens per request and daily volume.">
-<meta property="og:title" content="AI API Cost & Token Calculator">
-<meta property="og:description" content="Compare monthly LLM API costs across OpenAI, Anthropic, Google and DeepSeek. Edit prices, see the cheapest model instantly.">
+<link rel="canonical" href="https://shushu888-kr.github.io/ai-cost-calculator/">
+<meta name="robots" content="index,follow">
+<meta name="theme-color" content="#fafafa" media="(prefers-color-scheme:light)">
+<meta name="theme-color" content="#0e0f11" media="(prefers-color-scheme:dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%231f2937'/%3E%3Cpath d='M9 22V15M16 22V9M23 22V18' stroke='%23fafafa' stroke-width='2.6' stroke-linecap='round'/%3E%3C/svg%3E">
 <meta property="og:type" content="website">
+<meta property="og:site_name" content="AI API Cost &amp; Token Calculator">
+<meta property="og:url" content="https://shushu888-kr.github.io/ai-cost-calculator/">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="AI API Cost &amp; Token Calculator">
+<meta property="og:description" content="Compare monthly LLM API costs across OpenAI, Anthropic, Google and DeepSeek. Edit prices, see the lowest-cost model instantly.">
+<meta property="og:image" content="https://shushu888-kr.github.io/ai-cost-calculator/og-image.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="AI API cost and token calculator compared across seven models">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AI API Cost &amp; Token Calculator">
+<meta name="twitter:description" content="Estimate monthly LLM API costs for GPT-4o, Claude, Gemini and DeepSeek from your tokens per request and daily volume.">
+<meta name="twitter:image" content="https://shushu888-kr.github.io/ai-cost-calculator/og-image.png">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
 {"@type":"Question","name":"What is a token?","acceptedAnswer":{"@type":"Answer","text":"A token is a small chunk of text a language model reads or writes. In English, one token is roughly 4 characters or about 0.75 words, so 1,000 words is around 1,330 tokens. Code and non-English text usually use more tokens per word."}},
@@ -16,8 +33,12 @@
 {"@type":"Question","name":"What is prompt caching and how does it lower cost?","acceptedAnswer":{"@type":"Answer","text":"Prompt caching lets providers reuse a repeated prompt prefix, such as a long system prompt or document, at a steep discount, often 50% to 90% off input price. This calculator uses standard rates, so your real bill may be lower if you cache."}},
 {"@type":"Question","name":"Why can my real bill differ from this estimate?","acceptedAnswer":{"@type":"Answer","text":"Real bills depend on tokenizer differences between models, conversation history resent with each request, tool calls, reasoning tokens, batch discounts, caching, long-context surcharges and price changes. Treat this as a planning estimate."}},
 {"@type":"Question","name":"Are the default prices up to date?","acceptedAnswer":{"@type":"Answer","text":"Defaults are list prices per 1M tokens at the time of writing and providers change them often. Every rate in the table is editable, so check the provider's pricing page and adjust."}},
-{"@type":"Question","name":"How can I reduce my AI API costs?","acceptedAnswer":{"@type":"Answer","text":"Use a smaller model for simple tasks, shorten prompts, cap output length, enable prompt caching, use batch APIs for non-urgent work, and route easy requests to cheaper models."}}
+{"@type":"Question","name":"How can I reduce my AI API costs?","acceptedAnswer":{"@type":"Answer","text":"Use a smaller model for simple tasks, shorten prompts, cap output length, enable prompt caching, use batch APIs for non-urgent work, and route easy requests to cheaper models."}},
+{"@type":"Question","name":"How do I estimate tokens for a chat app that resends history?","acceptedAnswer":{"@type":"Answer","text":"Each turn resends the conversation so far, so input tokens grow with every turn and the total for one long conversation grows faster than its length. Measure the usage of a real conversation instead of multiplying a single request by the number of messages."}}
 ]}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"AI API Cost & Token Calculator","url":"https://shushu888-kr.github.io/ai-cost-calculator/","applicationCategory":"DeveloperApplication","applicationSubCategory":"LLM API pricing","operatingSystem":"Any","browserRequirements":"Requires JavaScript","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Free calculator for estimating and comparing monthly LLM API costs across GPT-4o, Claude, Gemini and DeepSeek."}
 </script>
 <style>
 :root{
@@ -92,6 +113,9 @@ td input{padding:6px 8px;width:100%;min-width:56px}
 .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
 .toast{color:var(--good);font-size:13.5px;align-self:center;opacity:0;transition:opacity .2s}
 .toast.on{opacity:1}
+.guide{margin-top:34px}
+.guide p{margin:0 0 12px;color:var(--mute);max-width:72ch}
+.guide p:last-child{margin-bottom:0}
 .faq{margin-top:34px}
 details{border-top:1px solid var(--line);padding:13px 0}
 details:last-child{border-bottom:1px solid var(--line)}
@@ -165,6 +189,13 @@ footer{margin-top:30px;color:var(--mute);font-size:12.5px}
     </section>
   </div>
 
+  <section class="guide" aria-labelledby="guideh">
+    <h2 id="guideh">How to estimate your monthly API cost</h2>
+    <p>Start with one request, not a whole month. Take a typical prompt and the answer it gets, count both in tokens (switch the input fields to words if that is how you wrote them), and multiply by the requests you expect in a day, then by 30.</p>
+    <p>Input and output are priced separately, and output is the expensive side: across the models below it costs three to ten times more per token. A short prompt that produces a long answer often inverts a budget written the other way round.</p>
+    <p>Two discounts are missing from the standard rates above. Batch APIs, for work that can wait a day, typically halve the price. Prompt caching, for a repeated system prompt or a fixed document, takes 50–90% off the input price of the cached part. With either switched on, the real bill lands below this estimate.</p>
+  </section>
+
   <section class="faq" aria-labelledby="faqh">
     <h2 id="faqh">Frequently asked questions</h2>
     <details><summary>What is a token?</summary><p>A token is a small chunk of text a model reads or writes. In English, one token is roughly 4 characters or about 0.75 words, so 1,000 words is around 1,330 tokens. Code and non-English text usually use more tokens per word.</p></details>
@@ -173,6 +204,7 @@ footer{margin-top:30px;color:var(--mute);font-size:12.5px}
     <details><summary>Why can my real bill differ from this estimate?</summary><p>Real bills depend on tokenizer differences between models, conversation history resent with each request, tool calls, reasoning tokens, batch discounts, caching, long-context surcharges and price changes. Treat this as a planning estimate.</p></details>
     <details><summary>Are the default prices up to date?</summary><p>Defaults are list prices per 1M tokens at the time of writing, and providers change them often. Every rate in the table is editable, so check the provider's pricing page and adjust.</p></details>
     <details><summary>How can I reduce my AI API costs?</summary><p>Use a smaller model for simple tasks, shorten prompts, cap output length, enable prompt caching, use batch APIs for non-urgent work, and route easy requests to cheaper models.</p></details>
+    <details><summary>How do I estimate tokens for a chat app that resends history?</summary><p>Each turn resends the conversation so far, so input tokens grow with every turn and the total for one long conversation grows faster than its length. Measure the usage of a real conversation instead of multiplying a single request by the number of messages.</p></details>
   </section>
   <footer>Estimates only. Not affiliated with OpenAI, Anthropic, Google or DeepSeek. Prices run in your browser; nothing is sent anywhere.</footer>
 </div>
@@ -231,7 +263,7 @@ footer{margin-top:30px;color:var(--mute);font-size:12.5px}
     last=rows;
     var max=rows[rows.length-1].m||1,best=rows[0],worst=rows[rows.length-1];
     var save=worst.m-best.m;
-    $("summary").innerHTML='<div><div class="sub">Best value</div><b>'+esc(best.n)+'</b> at '+money(best.m)+'/month</div>'+
+    $("summary").innerHTML='<div><div class="sub">Lowest</div><b>'+esc(best.n)+'</b> at '+money(best.m)+'/month</div>'+
       '<div><div class="sub">Savings vs '+esc(worst.n)+'</div><b>'+money(save)+'</b>/month'+
       (worst.m>0?' <span class="sub">('+Math.round(save/worst.m*100)+'% less)</span>':'')+'</div>';
     $("cards").innerHTML=rows.map(function(x,k){
@@ -268,8 +300,8 @@ footer{margin-top:30px;color:var(--mute);font-size:12.5px}
       "- Output: "+o.toLocaleString("en-US")+" tokens/request\n"+
       "- Volume: "+r.toLocaleString("en-US")+" requests/day ("+(r*DAYS).toLocaleString("en-US")+"/month)\n\n"+
       "| Rank | Model | Daily | Monthly (30 days) |\n|---|---|---|---|\n"+
-      last.map(function(x,k){return "| "+(k+1)+" | "+x.n+(k===0?" (Best Value)":"")+" | "+money(x.d)+" | "+money(x.m)+" |"}).join("\n")+
-      "\n\nBest value: "+last[0].n+". Saves "+money(last[last.length-1].m-last[0].m)+"/month vs "+last[last.length-1].n+".";
+      last.map(function(x,k){return "| "+(k+1)+" | "+x.n+(k===0?" (Lowest)":"")+" | "+money(x.d)+" | "+money(x.m)+" |"}).join("\n")+
+      "\n\nLowest: "+last[0].n+". Saves "+money(last[last.length-1].m-last[0].m)+"/month vs "+last[last.length-1].n+".";
     function done(){var s=$("toast");s.classList.add("on");setTimeout(function(){s.classList.remove("on")},1800)}
     if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(done,fallback)}else fallback();
     function fallback(){var ta=document.createElement("textarea");ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand("copy");done()}catch(e){}ta.remove()}
